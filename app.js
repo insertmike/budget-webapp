@@ -44,9 +44,7 @@ var budgetController = (function(){
             ID = data.allItems[type][data.allItems[type].length - 1].id + 1;
             } else {
                 ID = 0;
-            }
-           
-            
+            }           
             // Create new item based on 'inc' or 'exp' type
             
             if(type === 'exp') {
@@ -60,6 +58,23 @@ var budgetController = (function(){
 
             // Return new element
             return newItem;
+        },
+
+        deleteItem: function(type, id){
+            var ids, index;
+            // id = 6
+            // data.allItems[type][id];
+            // ids = [1 2 4 6 8]
+            // index = 3
+            var ids = data.allItems[type].map(function(current){
+                return current.id;
+            });
+
+            index = ids.indexOf(id);
+
+            if(index !== -1) {
+                data.allItems[type].splice(index, 1);
+            }
         },
 
         calculateBudget: function(){
@@ -233,14 +248,21 @@ var controller = (function(budgetCtrl, UICtrl) {
     };
 
     var ctrlDeleteItem = function(event) {
-        var itemID, splitID;
+        var itemID, splitID, type, ID;
 
         itemID = event.target.parentNode.parentNode.parentNode.parentNode.id;
 
         if(itemID){    
            // inc-
            splitID = itemID.split('-');
-           console.log(splitID);
+           type = splitID[0];
+           ID = parseInt(splitID[1]);
+           
+           // 1. Delete item from Data Structure
+            budgetCtrl.deleteItem(type, ID);
+           // 2. Delete item from UI
+
+           // 3. Update and show the new budget
         }
     };
 
