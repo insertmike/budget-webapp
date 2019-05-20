@@ -191,6 +191,12 @@ var UIController = (function() {
 
          return (type === 'exp' ? sign = '-' : sign = '+') + ' ' + int + '.' + dec;
     };
+    
+    var nodeListForEach = function(list, callback) {
+        for(var i = 0; i < list.length; i++) {
+            callback(list[i], i);
+        }
+    }; 
 
     return {
         getInput: function() {
@@ -253,7 +259,7 @@ var UIController = (function() {
             
         },
         
-        displayMonth: function() {
+        displayDate: function() {
             var now, year, month, months;
 
             // Store the day of today
@@ -270,14 +276,7 @@ var UIController = (function() {
         displayPercentages: function(percentages) {
             var fields = document.querySelectorAll(DOMstrings.expensesPerLabel);
             
-            var NodeListForEach = function(list, callback) {
-                for(var i = 0; i < list.length; i++) {
-                    callback(list[i], i);
-                }
-            }; 
-
-
-            NodeListForEach(fields, function(current, index) {
+            nodeListForEach(fields, function(current, index) {
                 if(percentages[index] > 0) {
                     current.textContent = percentages[index] + '%';
                 } else {
@@ -287,6 +286,15 @@ var UIController = (function() {
             });
         },
        
+        changedType: function() {
+            var fields = document.querySelectorAll(
+                DOMstrings.inputType + ',' +
+                DOMstrings.inputDescription + ',' +
+                DOMstrings.inputValue);
+                nodeListForEach(fields, function(cur) {
+                    cur.classList.toggle('red-focus');
+                });
+        },
 
         getDOMstrings: function() {
             return DOMstrings;
@@ -312,7 +320,8 @@ var controller = (function(budgetCtrl, UICtrl) {
         });
 
         document.querySelector(DOM.container).addEventListener('click', ctrlDeleteItem);
-    
+        
+        document.querySelector(DOM.inputType).addEventListener('change', UICtrl.changedType);
     };
 
   
@@ -393,7 +402,7 @@ var controller = (function(budgetCtrl, UICtrl) {
     return {
         init: function(){
             console.log('Application has started');
-            UICtrl.displayMonth();
+            UICtrl.displayDate();
             setupEventListeners();
             UIController.displayBudget({
                 budget: 0,
